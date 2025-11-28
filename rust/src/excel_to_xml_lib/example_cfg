@@ -1,0 +1,37 @@
+{
+    "sheetName":"",
+    "tagName": "Android tag",
+    "defaultLang":"en",
+    "langMap": {
+        "zh": "中文简体",
+        "zh-rTW": "中文繁体",
+        "en": "英语",
+        "ja": "日语",
+        "ko-rKR": "韩语",
+        "fr": "法语",
+        "de": "德语",
+        "es": "西班牙语",
+        "it": "意大利语",
+        "nl": "荷兰语"
+    },
+    "disableEscape": false,
+    "escapeOnly":{
+        "\\\n":"\\n",
+        "\n":"\\n",
+        "\\\\'":"\\'",
+        "'":"\\'",
+        "\\\\\"":"\\\"",
+        "\"":"\\\"",
+        " ":" ",
+        "&":"&amp;",
+        ">":"&gt;",
+        "<":"&lt;"
+    },
+    "reset": false,
+    "replaceBlankWithDefault": true,
+    "regex":"^\\s+|\\s+$",
+    "ignoreFolder": [
+        "build",
+        "mainland"
+    ]
+}

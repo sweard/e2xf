@@ -1,0 +1,14 @@
+[package]
+name = "rust_lib_e2xf"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.11.1"
+excel_to_xml = {path = "../rust/src/excel_to_xml_lib"}
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
