@@ -26,11 +26,15 @@ class _MainAppState extends State<MainApp> {
         controller: widget.viewModel.cfgController,
         maxLines: null,
         expands: true,
+        onChanged: (value) {
+          widget.viewModel.updateDefaultCfg();
+        },
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(_radiusValue),
           ),
           hintText: '编辑配置内容',
+          errorText: widget.viewModel.cfgErrTip
         ),
       ),
     );
@@ -127,12 +131,6 @@ class _MainAppState extends State<MainApp> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   _cfg(),
-                  _item(
-                    widget.viewModel.selectedJsonPath,
-                    'JSON文件未选择',
-                    '选择JSON文件',
-                    () => widget.viewModel.selectJsonFile(),
-                  ),
                   _marginTop(_marginValue),
                   _item(
                     widget.viewModel.selectedExcelPath,

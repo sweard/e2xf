@@ -6,24 +6,30 @@ import 'src/rust/api/bridge.dart' as lib;
 
 class MainViewModel extends ChangeNotifier {
   MainViewModel() {
-    defaultCfg = lib.getDefaultCfg();
-    cfgController.text = defaultCfg;
+    _defaultCfg = lib.getDefaultCfg();
+    cfgController.text = _defaultCfg;
     updateLog("Application initialized.");
   }
 
   String? _selectedJsonPath;
   String? _selectedExcelPath;
   String? _selectedXmlFolderPath;
-  String defaultCfg = "";
-  
- final TextEditingController cfgController = TextEditingController();
-
+  String _defaultCfg = "";
   String _log = "";
+  String _cfgErrTip = "";
+
+  final TextEditingController cfgController = TextEditingController();
 
   String? get selectedJsonPath => _selectedJsonPath;
   String? get selectedExcelPath => _selectedExcelPath;
   String? get selectedXmlFolderPath => _selectedXmlFolderPath;
   String get log => _log;
+  String get cfgErrTip => _cfgErrTip;
+
+  void updateDefaultCfg() {
+    _defaultCfg = cfgController.text;
+  }
+
   // 选择文件夹的方法
   Future<void> selectFolder() async {
     String? folderPath = await FilePicker.platform.getDirectoryPath();
@@ -56,17 +62,25 @@ class MainViewModel extends ChangeNotifier {
       PlatformFile file = result.files.first;
       _selectedExcelPath = file.path;
       final sheetNames = lib.getSheetNames(filePath: _selectedExcelPath!);
-      final json = jsonDecode(defaultCfg);
+      final json = jsonDecode(_defaultCfg);
       final sheetName = json['sheetName'];
       updateLog(sheetName);
       updateLog(sheetNames.toString());
-      if (sheetName.toString().isEmpty &&
-          sheetNames.isNotEmpty) {
+      if (sheetName.toString().isEmpty && sheetNames.isNotEmpty) {
         json['sheetName'] = sheetNames.first;
       }
-      defaultCfg = jsonEncode(json);
-      cfgController.text = defaultCfg;
-      updateLog(defaultCfg);
+      final curSheetName = json['sheetName'];
+      final isMatch = sheetNames.any(
+        (element) => element == curSheetName.toString(),
+      );
+      if (isMatch) {
+        _cfgErrTip = "";
+      } else {
+        _cfgErrTip = "Excel 中 没有对应的 Sheet Name";
+      }
+      _defaultCfg = jsonEncode(json);
+      cfgController.text = _defaultCfg;
+      updateLog(_defaultCfg);
       notifyListeners();
     }
   }
@@ -89,5 +103,11 @@ class MainViewModel extends ChangeNotifier {
   void updateLog(String message) {
     _log += '\n$message';
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    cfgController.dispose();
+    super.dispose();
   }
 }
