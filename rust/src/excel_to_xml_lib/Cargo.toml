@@ -5,7 +5,7 @@ edition = "2021"
 
 [lib]
 name = "excel_to_xml"
-crate-type = ["rlib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # Excel读取

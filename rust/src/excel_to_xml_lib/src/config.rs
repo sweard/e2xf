@@ -32,7 +32,7 @@ pub const CFG_JSON: &str = r#"{
     },
     "reset": false,
     "replaceBlankWithDefault": true,
-    "regex":"^\\s+|\\s+$",
+    "regex":"\\s+$",
     "ignoreFolder": [
         "build",
         "mainland"

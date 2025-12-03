@@ -62,8 +62,16 @@ pub fn parse_cfg_with_excel(
     // 打开Excel文件并获取工作表
     let mut workbook = open_excel_workbook(file_path)?;
 
+    let sheet_names = workbook.sheet_names();
+    let mut sheet_name = &parsed_cfg.sheet_name;
+    if sheet_name.is_empty() {
+         sheet_name = sheet_names
+        .get(0)
+        .ok_or_else(|| Box::new(ExcelError::NoSheetsFound))?
+    }
+
     // 获取cell_reader迭代器
-    let cell_reader = workbook.worksheet_cells_reader(&parsed_cfg.sheet_name);
+    let cell_reader = workbook.worksheet_cells_reader(&sheet_name);
     // 检查是否成功获取cell_reader
     let mut cell_reader = match cell_reader {
         Ok(reader) => reader,
@@ -107,7 +115,7 @@ pub fn parse_cfg_with_excel(
 }
 
 /// 打开Excel文件并获取第一个工作表名称
-pub fn open_excel_workbook(file_path: &str) -> Result<(Xlsx<BufReader<File>>), Box<dyn Error>> {
+pub fn open_excel_workbook(file_path: &str) -> Result<Xlsx<BufReader<File>>, Box<dyn Error>> {
     let workbook: Xlsx<_> = open_workbook(file_path)?;
     Ok(workbook)
 }

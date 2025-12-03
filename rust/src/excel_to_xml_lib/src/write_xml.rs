@@ -1,5 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
+    error::Error,
     fs::{remove_file, rename, File},
     io::{BufReader, BufWriter},
 };
@@ -37,11 +38,11 @@ fn get_parsed_data<'a>(
     cfg_json: &str,
     excel_path: &'a str,
     xml_dir_path: &str,
-) -> Option<(&'a str, ParsedCfg, Vec<String>)> {
+) -> Result<(&'a str, ParsedCfg, Vec<String>), Box<dyn Error>> {
     let cfg = read_excel::parse_cfg_with_excel(excel_path, cfg_json);
     if cfg.is_err() {
         println!("解析配置时出错: {:?}", cfg.err());
-        return None;
+        return Err("解析配置时出错".into());
     }
     let parsed_cfg = cfg.unwrap();
     println!("解析配置成功: {:?}", parsed_cfg);
@@ -53,12 +54,12 @@ fn get_parsed_data<'a>(
     );
     if forder.is_none() {
         println!("未找到res文件夹");
-        return None;
+        return Err("未找到res文件夹".into());
     }
     let res_folder = forder.unwrap();
     println!("找到res文件夹: {}", res_folder);
     let paths = find_files::collect_target_files(&res_folder, "values", "strings.xml");
-    return Some((excel_path, parsed_cfg, paths));
+    return Ok((excel_path, parsed_cfg, paths));
 }
 
 /// 准备需要写入的数据
@@ -67,10 +68,7 @@ pub fn update(
     excel_path: &str,
     xml_dir_path: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let (file_path, parsed_cfg, paths) = match get_parsed_data(cfg_json, excel_path, xml_dir_path) {
-        Some((file_path, parsed_cfg, paths)) => (file_path, parsed_cfg, paths),
-        None => return Ok(()),
-    };
+    let (file_path, parsed_cfg, paths) = get_parsed_data(cfg_json, excel_path, xml_dir_path)?;
     let tag_index = parsed_cfg.tag_index;
     // 预先打开Excel文件，只打开一次
     let mut workbook: Xlsx<_> = open_workbook(file_path)?;
@@ -152,10 +150,7 @@ pub fn quick_update(
     excel_path: &str,
     xml_dir_path: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let (file_path, parsed_cfg, paths) = match get_parsed_data(cfg_json, excel_path, xml_dir_path) {
-        Some((file_path, parsed_cfg, paths)) => (file_path, parsed_cfg, paths),
-        None => return Ok(()),
-    };
+    let (file_path, parsed_cfg, paths) = get_parsed_data(cfg_json, excel_path, xml_dir_path)?;
     let tag_index = parsed_cfg.tag_index;
 
     // 预先打开Excel文件，只打开一次
