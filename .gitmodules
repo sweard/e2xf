@@ -1,0 +1,3 @@
+[submodule "rust/src/excel_to_xml"]
+	path = rust/src/excel_to_xml
+	url = https://github.com/sweard/excel_to_xml.git
