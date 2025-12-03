@@ -20,6 +20,7 @@ class _MainAppState extends State<MainApp> {
   final double _radiusValue = 8;
 
   SizedBox _cfg() {
+    print("Rebuild cfg text field");
     return SizedBox(
       height: 200,
       child: TextField(
@@ -34,14 +35,21 @@ class _MainAppState extends State<MainApp> {
             borderRadius: BorderRadius.circular(_radiusValue),
           ),
           hintText: '编辑配置内容',
-          errorText: widget.viewModel.cfgErrTip
+          errorText: widget.viewModel.cfgErrTip,
         ),
       ),
     );
   }
 
-  Row _item(String? path, String hint, String btText, VoidCallback onPressed) {
-    return Row(
+  Row _item(String path, String hint, String btText, VoidCallback onPressed) {
+    print("Rebuild item btText: $btText");
+    var text = "";
+    if(path.isEmpty) {
+      text = hint;
+    } else {
+      text = path;
+    }
+    var row = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Expanded(
@@ -62,8 +70,7 @@ class _MainAppState extends State<MainApp> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                path ?? hint,
-
+                text,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
@@ -86,6 +93,7 @@ class _MainAppState extends State<MainApp> {
         ),
       ],
     );
+    return row;
   }
 
   Expanded _logText() {
@@ -100,14 +108,19 @@ class _MainAppState extends State<MainApp> {
           border: Border.all(color: Colors.grey[300]!),
         ),
         child: SingleChildScrollView(
-          child: Text(
-            widget.viewModel.log,
-            style: const TextStyle(
-              fontSize: 14,
-              fontFamily: 'monospace', // 等宽字体，适合日志
-              fontWeight: FontWeight.normal,
-            ),
-            textAlign: TextAlign.left,
+          child: ValueListenableBuilder(
+            valueListenable: widget.viewModel.log,
+            builder: (_, value, _) {
+              return Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'monospace', // 等宽字体，适合日志
+                  fontWeight: FontWeight.normal,
+                ),
+                textAlign: TextAlign.left,
+              );
+            },
           ),
         ),
       ),
@@ -124,48 +137,59 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (context, child) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _cfg(),
-                  _marginTop(_marginValue),
-                  _item(
-                    widget.viewModel.selectedExcelPath,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ValueListenableBuilder(
+                valueListenable: widget.viewModel.cfgController,
+                builder: (context,value, child) {
+                  return _cfg();
+                },
+              ),
+              _marginTop(_marginValue),
+              ValueListenableBuilder(
+                valueListenable: widget.viewModel.selectedExcelPath,
+                builder: (context, value, child) {
+                  return _item(
+                    value,
                     'Excel文件未选择',
                     '选择Excel文件',
                     () => widget.viewModel.selectExcelFile(),
-                  ),
-                  _marginTop(_marginValue),
-                  _item(
-                    widget.viewModel.selectedXmlFolderPath,
+                  );
+                },
+              ),
+              _marginTop(_marginValue),
+              ValueListenableBuilder(
+                valueListenable: widget.viewModel.selectedXmlFolderPath,
+                builder: (context, value, child) {
+                  return _item(
+                    value,
                     '模块文件夹未选择',
                     '选择模块文件夹',
                     () => widget.viewModel.selectFolder(),
+                  );
+                },
+              ),
+
+              _marginTop(_marginValue),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      _radiusValue,
+                    ), // 设置圆角半径为 8
                   ),
-                  _marginTop(_marginValue),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          _radiusValue,
-                        ), // 设置圆角半径为 8
-                      ),
-                    ),
-                    onPressed: () {
-                      widget.viewModel.update();
-                    },
-                    child: Text('开始转换'),
-                  ),
-                  _marginTop(40),
-                  // 日志输出
-                  _logText(),
-                ],
-              );
-            },
+                ),
+                onPressed: () {
+                  widget.viewModel.update();
+                },
+                child: Text('开始转换'),
+              ),
+              _marginTop(40),
+              // 日志输出
+              _logText(),
+            ],
           ),
         ),
       ),
