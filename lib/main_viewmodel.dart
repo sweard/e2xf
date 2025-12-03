@@ -12,7 +12,7 @@ class MainViewModel {
     updateLog("Application initialized.");
   }
 
-  final Event<String> _selectedJsonPath = Event("");
+
   final Event<String> _selectedExcelPath =  Event("");
   final Event<String> _selectedXmlFolderPath = Event("");
   String _defaultCfg = "";
@@ -22,7 +22,7 @@ class MainViewModel {
 
   final TextEditingController cfgController = TextEditingController();
 
-  Event<String> get selectedJsonPath => _selectedJsonPath;
+
   Event<String> get selectedExcelPath => _selectedExcelPath;
   Event<String> get selectedXmlFolderPath => _selectedXmlFolderPath;
   Event<String> get log => _log;
@@ -37,19 +37,6 @@ class MainViewModel {
     String? folderPath = await FilePicker.platform.getDirectoryPath();
     if (folderPath != null) {
       _selectedXmlFolderPath.value = folderPath;
-      // notifyListeners();
-    }
-  }
-
-  // 选择JSON文件的方法
-  Future<void> selectJsonFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      _selectedJsonPath.value = file.path;
       // notifyListeners();
     }
   }
@@ -91,16 +78,17 @@ class MainViewModel {
   }
 
   Future<void> update() async {
-    if (_selectedJsonPath.value.isEmpty ||
-        _selectedExcelPath.value.isEmpty ||
-        _selectedXmlFolderPath.value.isEmpty) {
-      updateLog("Please select all required paths before updating.");
+    final excelPath = _selectedExcelPath.value;
+    final xmlFolderPath = _selectedXmlFolderPath.value;
+    if (excelPath.isEmpty ||
+        xmlFolderPath.isEmpty) {
+      updateLog("Please select all required paths before updating. excelPath: $excelPath, xmlFolderPath: $xmlFolderPath");
       return; // 确保所有路径都已选择
     }
     final result = await lib.update(
-      cfgJson: _selectedJsonPath.value,
-      excelPath: _selectedExcelPath.value,
-      xmlDirPath: _selectedXmlFolderPath.value,
+      cfgJson: _defaultCfg,
+      excelPath: excelPath,
+      xmlDirPath: xmlFolderPath,
     );
     updateLog(result);
   }
