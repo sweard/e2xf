@@ -85,7 +85,7 @@ class MainViewModel {
       updateLog("Please select all required paths before updating. excelPath: $excelPath, xmlFolderPath: $xmlFolderPath");
       return; // 确保所有路径都已选择
     }
-    final result = await lib.update(
+    final result = await lib.quickUpdate(
       cfgJson: _defaultCfg,
       excelPath: excelPath,
       xmlDirPath: xmlFolderPath,
