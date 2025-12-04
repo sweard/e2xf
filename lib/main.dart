@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:e2xf/src/rust/frb_generated.dart';
 import 'main_viewmodel.dart';
@@ -19,8 +20,16 @@ class _MainAppState extends State<MainApp> {
   final int _marginValue = 20;
   final double _radiusValue = 8;
 
+  @override
+  void dispose() {
+    widget.viewModel.dispose();
+    super.dispose();
+  }
+
   SizedBox _cfg() {
-    print("Rebuild cfg text field");
+    if (kDebugMode) {
+      print("Rebuild cfg textfield");
+    }
     return SizedBox(
       height: 200,
       child: TextField(
@@ -42,9 +51,11 @@ class _MainAppState extends State<MainApp> {
   }
 
   Row _item(String path, String hint, String btText, VoidCallback onPressed) {
-    print("Rebuild item btText: $btText");
+    if (kDebugMode) {
+      print("Rebuild item btText: $btText");
+    }
     var text = "";
-    if(path.isEmpty) {
+    if (path.isEmpty) {
       text = hint;
     } else {
       text = path;
@@ -97,6 +108,7 @@ class _MainAppState extends State<MainApp> {
   }
 
   Expanded _logText() {
+    final controller = widget.viewModel.scrollController;
     return Expanded(
       flex: 1,
       child: Container(
@@ -108,9 +120,19 @@ class _MainAppState extends State<MainApp> {
           border: Border.all(color: Colors.grey[300]!),
         ),
         child: SingleChildScrollView(
+          controller: widget.viewModel.scrollController,
           child: ValueListenableBuilder(
             valueListenable: widget.viewModel.log,
             builder: (_, value, _) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (controller.hasClients) {
+                  controller.animateTo(
+                    controller.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                  );
+                }
+              });
               return Text(
                 value,
                 style: const TextStyle(
@@ -142,7 +164,7 @@ class _MainAppState extends State<MainApp> {
             children: [
               ValueListenableBuilder(
                 valueListenable: widget.viewModel.cfgController,
-                builder: (context,value, child) {
+                builder: (context, value, child) {
                   return _cfg();
                 },
               ),

@@ -19,7 +19,7 @@ class MainViewModel {
   final Event<String> _log = Event("");
   String _cfgErrTip = "";
 
-
+  final ScrollController scrollController = ScrollController();
   final TextEditingController cfgController = TextEditingController();
 
 
@@ -96,5 +96,10 @@ class MainViewModel {
   void updateLog(String message) {
     _log.value += '\n$message';
     // notifyListeners();
+  }
+
+  void dispose() {
+    cfgController.dispose();
+    scrollController.dispose();
   }
 }
