@@ -69,7 +69,7 @@ class MainViewModel {
       } else {
         _cfgErrTip = "Excel 中 没有对应的 Sheet Name";
       }
-      _defaultCfg = jsonEncode(json);
+      _defaultCfg = JsonEncoder.withIndent('    ').convert(json);
       // 更新文本框内容
       cfgController.text = _defaultCfg;
       updateLog(_defaultCfg);
@@ -85,7 +85,7 @@ class MainViewModel {
       updateLog("Please select all required paths before updating. excelPath: $excelPath, xmlFolderPath: $xmlFolderPath");
       return; // 确保所有路径都已选择
     }
-    final result = await lib.quickUpdate(
+    final result = await lib.update(
       cfgJson: _defaultCfg,
       excelPath: excelPath,
       xmlDirPath: xmlFolderPath,
@@ -94,7 +94,11 @@ class MainViewModel {
   }
 
   void updateLog(String message) {
-    _log.value += '\n$message';
+    if (_log.value.isEmpty) {
+      _log.value = message;
+    } else {
+      _log.value += '\n$message';
+    }
     // notifyListeners();
   }
 
