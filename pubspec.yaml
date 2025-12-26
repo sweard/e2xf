@@ -38,6 +38,7 @@ dependencies:
   rust_lib_e2xf:
     path: rust_builder
   flutter_rust_bridge: 2.11.1
+  shared_preferences: ^2.5.4
 
 dev_dependencies:
   flutter_test:

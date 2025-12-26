@@ -1,17 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:e2xf/event.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'src/rust/api/bridge.dart' as lib;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainViewModel {
+  static const String cfgKey = 'defaultCfg';
+
   MainViewModel() {
-    _defaultCfg = lib.getDefaultCfg();
-    cfgController.text = _defaultCfg;
     updateLog("Application initialized.");
   }
-
 
   final Event<String> _selectedExcelPath =  Event("");
   final Event<String> _selectedXmlFolderPath = Event("");
@@ -21,16 +22,48 @@ class MainViewModel {
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController cfgController = TextEditingController();
-
+  
+  // 防抖Timer
+  Timer? _debounceTimer;
+  final Duration _duration = Duration(milliseconds: 500);
 
   Event<String> get selectedExcelPath => _selectedExcelPath;
   Event<String> get selectedXmlFolderPath => _selectedXmlFolderPath;
   Event<String> get log => _log;
   String get cfgErrTip => _cfgErrTip;
+  late SharedPreferences prefs;
 
+  // 带防抖的配置更新方法
   void updateDefaultCfg() {
-    _defaultCfg = cfgController.text;
+     _defaultCfg = cfgController.text;
+    // 取消之前的定时器
+    _debounceTimer?.cancel();
+    // 设置新的定时器，500毫秒后执行保存
+    _debounceTimer = Timer(_duration, () {
+      _saveDefaultCfg();
+    });
   }
+
+  void init() {
+     _loadPreferences();
+  }
+
+  // 从 SharedPreferences 加载默认配置
+  Future<void> _loadPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    final cache = prefs.getString(cfgKey);
+    if (cache != null && cache.isNotEmpty) {
+      updateLog("Found cached configuration in preferences.");
+      _defaultCfg = cache;
+    } else {
+      updateLog("No cached configuration found, using library default.");
+      _defaultCfg = lib.getDefaultCfg();
+    }
+    cfgController.text = _defaultCfg;
+  }
+
+  // 保存默认配置到 SharedPreferences
+  void _saveDefaultCfg()=> prefs.setString(cfgKey, _defaultCfg);
 
   // 选择文件夹的方法
   Future<void> selectFolder() async {
@@ -103,6 +136,7 @@ class MainViewModel {
   }
 
   void dispose() {
+    _debounceTimer?.cancel(); // 清理防抖定时器
     cfgController.dispose();
     scrollController.dispose();
   }

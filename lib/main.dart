@@ -20,6 +20,18 @@ class _MainAppState extends State<MainApp> {
   final int _marginValue = 20;
   final double _radiusValue = 8;
 
+  void _println(String msg) {
+    if (kDebugMode) {
+      print(msg);
+    }
+  }
+
+  @override
+  void initState() {
+    widget.viewModel.init();
+    super.initState();
+  }
+
   @override
   void dispose() {
     widget.viewModel.dispose();
@@ -27,9 +39,7 @@ class _MainAppState extends State<MainApp> {
   }
 
   SizedBox _cfg() {
-    if (kDebugMode) {
-      print("Rebuild cfg textfield");
-    }
+    _println("Rebuild cfg textfield");
     return SizedBox(
       height: 200,
       child: TextField(
@@ -51,9 +61,7 @@ class _MainAppState extends State<MainApp> {
   }
 
   Row _item(String path, String hint, String btText, VoidCallback onPressed) {
-    if (kDebugMode) {
-      print("Rebuild item btText: $btText");
-    }
+    _println("Rebuild item btText: $btText");
     var text = "";
     if (path.isEmpty) {
       text = hint;
