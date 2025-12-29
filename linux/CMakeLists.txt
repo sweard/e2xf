@@ -126,3 +126,9 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
   install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+# Install the application icon and desktop file
+install(FILES "runner/resources/app_icon.png" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+  COMPONENT Runtime)
+install(FILES "runner/resources/e2xf.desktop" DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  COMPONENT Runtime)

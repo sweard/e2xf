@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=e2xf
+Comment=A new Flutter project.
+Exec=e2xf
+Icon=app_icon
+Terminal=false
+Type=Application
+Categories=Utility;
