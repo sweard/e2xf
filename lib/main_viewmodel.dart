@@ -249,7 +249,7 @@ class MainViewModel {
     try {
       _isLoading.value = true;
       updateLog("开始转换...");
-      final result = await lib.update(
+      final result = await lib.quickUpdate(
         cfgJson: _defaultCfg,
         excelPath: excelPath,
         xmlDirPath: xmlFolderPath,
