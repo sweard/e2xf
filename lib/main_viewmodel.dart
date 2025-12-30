@@ -1,20 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:e2xf/event.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'src/rust/api/bridge.dart' as lib;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:macos_secure_bookmarks/macos_secure_bookmarks.dart';
 
 class MainViewModel {
   static const String cfgKey = 'defaultCfg';
+  static const String excelPathKey = 'excelPath';
+  static const String xmlFolderPathKey = 'xmlFolderPath';
+  static const String excelBookmarkKey = 'excelBookmark';
+  static const String xmlFolderBookmarkKey = 'xmlFolderBookmark';
+
+  final _secureBookmarks = SecureBookmarks();
+
+  // 存储已解析的 security-scoped 资源，以便 dispose 时释放
+  FileSystemEntity? _resolvedExcelFile;
+  FileSystemEntity? _resolvedXmlFolder;
 
   MainViewModel() {
     updateLog("Application initialized.");
   }
 
-  final Event<String> _selectedExcelPath =  Event("");
+  final Event<String> _selectedExcelPath = Event("");
   final Event<String> _selectedXmlFolderPath = Event("");
   String _defaultCfg = "";
   final Event<String> _log = Event("");
@@ -22,7 +34,7 @@ class MainViewModel {
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController cfgController = TextEditingController();
-  
+
   // 防抖Timer
   Timer? _debounceTimer;
   final Duration _duration = Duration(milliseconds: 500);
@@ -35,42 +47,126 @@ class MainViewModel {
 
   // 带防抖的配置更新方法
   void updateDefaultCfg() {
-     _defaultCfg = cfgController.text;
+    _defaultCfg = cfgController.text;
     // 取消之前的定时器
     _debounceTimer?.cancel();
     // 设置新的定时器，500毫秒后执行保存
     _debounceTimer = Timer(_duration, () {
-      _saveDefaultCfg();
+      _savePerference(cfgKey, _defaultCfg);
     });
   }
 
   void init() {
-     _loadPreferences();
+    _loadPreferences();
   }
 
   // 从 SharedPreferences 加载默认配置
   Future<void> _loadPreferences() async {
     prefs = await SharedPreferences.getInstance();
-    final cache = prefs.getString(cfgKey);
-    if (cache != null && cache.isNotEmpty) {
-      updateLog("Found cached configuration in preferences.");
-      _defaultCfg = cache;
+    final cfgCache = prefs.getString(cfgKey);
+    if (cfgCache != null && cfgCache.isNotEmpty) {
+      _defaultCfg = cfgCache;
     } else {
-      updateLog("No cached configuration found, using library default.");
       _defaultCfg = lib.getDefaultCfg();
     }
     cfgController.text = _defaultCfg;
+
+    // 加载之前选择的文件路径（macOS需要恢复bookmark）
+    await _loadExcelPath();
+
+    // 加载之前选择的文件夹路径（macOS需要恢复bookmark）
+    await _loadXmlFolderPath();
+
+    updateLog(
+      "Cache loaded.\ncfgCache: ${cfgCache?.substring(0, cfgCache.length > 50 ? 50 : cfgCache.length) ?? 'null'}...\nexcelPath: ${_selectedExcelPath.value}\nxmlFolderPath: ${_selectedXmlFolderPath.value}",
+    );
   }
 
-  // 保存默认配置到 SharedPreferences
-  void _saveDefaultCfg()=> prefs.setString(cfgKey, _defaultCfg);
+  // 恢复 Excel 文件路径和访问权限
+  Future<void> _loadExcelPath() async {
+    if (Platform.isMacOS) {
+      final bookmarkData = prefs.getString(excelBookmarkKey);
+      if (bookmarkData != null && bookmarkData.isNotEmpty) {
+        try {
+          final resolvedFile = await _secureBookmarks.resolveBookmark(
+            bookmarkData,
+          );
+          _selectedExcelPath.value = resolvedFile.path;
+          await _secureBookmarks.startAccessingSecurityScopedResource(
+            resolvedFile,
+          );
+          _resolvedExcelFile = resolvedFile; // 保存已解析的文件
+          _updateCfgWithExcel(resolvedFile.path);
+          updateLog("已恢复 Excel 文件访问权限: ${resolvedFile.path}");
+          return;
+        } catch (e) {
+          updateLog("恢复 Excel bookmark 失败: $e");
+        }
+      }
+    } else {
+      final excelPathCache = prefs.getString(excelPathKey);
+      if (excelPathCache != null && excelPathCache.isNotEmpty) {
+        _selectedExcelPath.value = excelPathCache;
+        _updateCfgWithExcel(excelPathCache);
+      }
+    }
+  }
+
+  // 恢复 XML 文件夹路径和访问权限
+  Future<void> _loadXmlFolderPath() async {
+    if (Platform.isMacOS) {
+      final bookmarkData = prefs.getString(xmlFolderBookmarkKey);
+      if (bookmarkData != null && bookmarkData.isNotEmpty) {
+        try {
+          final resolvedFile = await _secureBookmarks.resolveBookmark(
+            bookmarkData,
+            isDirectory: true,
+          );
+          _selectedXmlFolderPath.value = resolvedFile.path;
+          await _secureBookmarks.startAccessingSecurityScopedResource(
+            resolvedFile,
+          );
+          _resolvedXmlFolder = resolvedFile; // 保存已解析的文件夹
+          updateLog("已恢复 XML 文件夹访问权限: ${resolvedFile.path}");
+          return;
+        } catch (e) {
+          updateLog("恢复 XML folder bookmark 失败: $e");
+        }
+      }
+    } else {
+      final xmlFolderPathCache = prefs.getString(xmlFolderPathKey);
+      if (xmlFolderPathCache != null && xmlFolderPathCache.isNotEmpty) {
+        _selectedXmlFolderPath.value = xmlFolderPathCache;
+      }
+    }
+  }
+
+  // 更新缓存内容
+  void _savePerference(String key, String value) {
+    prefs.setString(key, value);
+  }
 
   // 选择文件夹的方法
   Future<void> selectFolder() async {
     String? folderPath = await FilePicker.platform.getDirectoryPath();
     if (folderPath != null) {
       _selectedXmlFolderPath.value = folderPath;
-      // notifyListeners();
+      _savePerference(xmlFolderPathKey, folderPath);
+
+      // macOS: 保存 security-scoped bookmark
+      if (Platform.isMacOS) {
+        try {
+          final bookmark = await _secureBookmarks.bookmark(
+            Directory(folderPath),
+          );
+          _savePerference(xmlFolderBookmarkKey, bookmark);
+          updateLog("Selected XML folder: $folderPath (权限已保存)");
+        } catch (e) {
+          updateLog("保存文件夹 bookmark 失败: $e\nSelected XML folder: $folderPath");
+        }
+      } else {
+        updateLog("Selected XML folder: $folderPath");
+      }
     }
   }
 
@@ -82,11 +178,36 @@ class MainViewModel {
     );
     if (result != null) {
       PlatformFile file = result.files.first;
-      _selectedExcelPath.value = file.path;
-      final sheetNames = lib.getSheetNames(filePath: _selectedExcelPath.value);
+      String? filePath = file.path;
+      if (filePath == null) {
+        updateLog("Selected file path is null.");
+        return;
+      }
+      _selectedExcelPath.value = filePath;
+      _savePerference(excelPathKey, filePath);
+
+      // macOS: 保存 security-scoped bookmark
+      if (Platform.isMacOS) {
+        try {
+          final bookmark = await _secureBookmarks.bookmark(File(filePath));
+          _savePerference(excelBookmarkKey, bookmark);
+          updateLog("Selected Excel file: $filePath (权限已保存)");
+        } catch (e) {
+          updateLog("保存文件 bookmark 失败: $e\nSelected Excel file: $filePath");
+        }
+      } else {
+        updateLog("Selected Excel file: $filePath");
+      }
+
+      _updateCfgWithExcel(filePath);
+    }
+  }
+
+  void _updateCfgWithExcel(String filePath) {
+    try {
+      final sheetNames = lib.getSheetNames(filePath: filePath);
       final json = jsonDecode(_defaultCfg);
       final sheetName = json['sheetName'];
-      updateLog(sheetName);
       updateLog(sheetNames.toString());
       if (sheetName.toString().isEmpty && sheetNames.isNotEmpty) {
         // 如果 sheetName 为空且 sheetNames 不为空，则默认选择第一个 sheetName
@@ -105,20 +226,24 @@ class MainViewModel {
       _defaultCfg = JsonEncoder.withIndent('    ').convert(json);
       // 更新文本框内容
       cfgController.text = _defaultCfg;
-      updateLog(_defaultCfg);
-      // notifyListeners();
+    } catch (e) {
+      updateLog(
+        "无法读取文件: $filePath\n错误: $e\n提示: macOS 沙盒限制，缓存的路径可能无法访问，请重新选择文件",
+      );
+      _cfgErrTip = "文件访问失败，请重新选择";
     }
   }
 
   Future<void> update() async {
     final excelPath = _selectedExcelPath.value;
     final xmlFolderPath = _selectedXmlFolderPath.value;
-    if (excelPath.isEmpty ||
-        xmlFolderPath.isEmpty) {
-      updateLog("Please select all required paths before updating. excelPath: $excelPath, xmlFolderPath: $xmlFolderPath");
+    if (excelPath.isEmpty || xmlFolderPath.isEmpty) {
+      updateLog(
+        "Please select all required paths before updating. excelPath: $excelPath, xmlFolderPath: $xmlFolderPath",
+      );
       return; // 确保所有路径都已选择
     }
-    final result = await lib.quickUpdate(
+    final result = await lib.update(
       cfgJson: _defaultCfg,
       excelPath: excelPath,
       xmlDirPath: xmlFolderPath,
@@ -135,8 +260,23 @@ class MainViewModel {
     // notifyListeners();
   }
 
-  void dispose() {
+  void dispose() async {
     _debounceTimer?.cancel(); // 清理防抖定时器
+
+    // 释放 macOS security-scoped 资源
+    if (Platform.isMacOS) {
+      if (_resolvedExcelFile != null) {
+        await _secureBookmarks.stopAccessingSecurityScopedResource(
+          _resolvedExcelFile!,
+        );
+      }
+      if (_resolvedXmlFolder != null) {
+        await _secureBookmarks.stopAccessingSecurityScopedResource(
+          _resolvedXmlFolder!,
+        );
+      }
+    }
+
     cfgController.dispose();
     scrollController.dispose();
   }

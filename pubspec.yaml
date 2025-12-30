@@ -39,6 +39,7 @@ dependencies:
     path: rust_builder
   flutter_rust_bridge: 2.11.1
   shared_preferences: ^2.5.4
+  macos_secure_bookmarks: ^0.2.1
 
 dev_dependencies:
   flutter_test:
