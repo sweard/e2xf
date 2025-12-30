@@ -202,19 +202,42 @@ class _MainAppState extends State<MainApp> {
               ),
 
               _marginTop(_marginValue),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      _radiusValue,
-                    ), // 设置圆角半径为 8
-                  ),
-                ),
-                onPressed: () {
-                  widget.viewModel.update();
+              ValueListenableBuilder<bool>(
+                valueListenable: widget.viewModel.isLoading,
+                builder: (context, isLoading, child) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(_radiusValue),
+                      ),
+                    ),
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            widget.viewModel.update();
+                          },
+                    child: isLoading
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Text('转换中...'),
+                            ],
+                          )
+                        : Text('开始转换'),
+                  );
                 },
-                child: Text('开始转换'),
               ),
               _marginTop(40),
               // 日志输出

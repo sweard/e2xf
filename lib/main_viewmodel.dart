@@ -31,6 +31,7 @@ class MainViewModel {
   String _defaultCfg = "";
   final Event<String> _log = Event("");
   String _cfgErrTip = "";
+  final Event<bool> _isLoading = Event(false);
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController cfgController = TextEditingController();
@@ -43,6 +44,7 @@ class MainViewModel {
   Event<String> get selectedXmlFolderPath => _selectedXmlFolderPath;
   Event<String> get log => _log;
   String get cfgErrTip => _cfgErrTip;
+  Event<bool> get isLoading => _isLoading;
   late SharedPreferences prefs;
 
   // 带防抖的配置更新方法
@@ -243,12 +245,21 @@ class MainViewModel {
       );
       return; // 确保所有路径都已选择
     }
-    final result = await lib.update(
-      cfgJson: _defaultCfg,
-      excelPath: excelPath,
-      xmlDirPath: xmlFolderPath,
-    );
-    updateLog(result);
+
+    try {
+      _isLoading.value = true;
+      updateLog("开始转换...");
+      final result = await lib.update(
+        cfgJson: _defaultCfg,
+        excelPath: excelPath,
+        xmlDirPath: xmlFolderPath,
+      );
+      updateLog(result);
+    } catch (e) {
+      updateLog("转换失败: $e");
+    } finally {
+      _isLoading.value = false;
+    }
   }
 
   void updateLog(String message) {
