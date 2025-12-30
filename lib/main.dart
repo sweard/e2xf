@@ -161,6 +161,73 @@ class _MainAppState extends State<MainApp> {
     return SizedBox(height: value.toDouble());
   }
 
+  Row _update() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: ValueListenableBuilder<bool>(
+            valueListenable: widget.viewModel.isLoading,
+            builder: (context, isLoading, child) {
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(_radiusValue),
+                  ),
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        widget.viewModel.update();
+                      },
+                child: isLoading
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text('转换中...'),
+                        ],
+                      )
+                    : Text('开始转换'),
+              );
+            },
+          ),
+        ),
+        ValueListenableBuilder(
+          valueListenable: widget.viewModel.useQuickUpdate,
+          builder: (_, useQuickUpdate, _) {
+            return Row(
+              children: [
+                SizedBox(width: 16),
+                Text('快速转换'),
+                Checkbox(
+                  value: useQuickUpdate,
+                  onChanged: (value) {
+                    if (value != null) {
+                      widget.viewModel.useQuickUpdate.value = value;
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -202,43 +269,7 @@ class _MainAppState extends State<MainApp> {
               ),
 
               _marginTop(_marginValue),
-              ValueListenableBuilder<bool>(
-                valueListenable: widget.viewModel.isLoading,
-                builder: (context, isLoading, child) {
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(_radiusValue),
-                      ),
-                    ),
-                    onPressed: isLoading
-                        ? null
-                        : () {
-                            widget.viewModel.update();
-                          },
-                    child: isLoading
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Text('转换中...'),
-                            ],
-                          )
-                        : Text('开始转换'),
-                  );
-                },
-              ),
+              _update(),
               _marginTop(40),
               // 日志输出
               _logText(),

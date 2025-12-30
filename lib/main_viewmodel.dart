@@ -32,6 +32,7 @@ class MainViewModel {
   final Event<String> _log = Event("");
   String _cfgErrTip = "";
   final Event<bool> _isLoading = Event(false);
+  final Event<bool> _useQuickUpdate = Event(true);
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController cfgController = TextEditingController();
@@ -45,6 +46,7 @@ class MainViewModel {
   Event<String> get log => _log;
   String get cfgErrTip => _cfgErrTip;
   Event<bool> get isLoading => _isLoading;
+  Event<bool> get useQuickUpdate => _useQuickUpdate;
   late SharedPreferences prefs;
 
   // 带防抖的配置更新方法
@@ -236,6 +238,10 @@ class MainViewModel {
     }
   }
 
+  void toggleUseQuickUpdate(bool value) {
+    _useQuickUpdate.value = value;
+  }
+
   Future<void> update() async {
     final excelPath = _selectedExcelPath.value;
     final xmlFolderPath = _selectedXmlFolderPath.value;
@@ -249,11 +255,20 @@ class MainViewModel {
     try {
       _isLoading.value = true;
       updateLog("开始转换...");
-      final result = await lib.quickUpdate(
-        cfgJson: _defaultCfg,
-        excelPath: excelPath,
-        xmlDirPath: xmlFolderPath,
-      );
+      var result = "";
+      if (useQuickUpdate.value) {
+        result = await lib.quickUpdate(
+          cfgJson: _defaultCfg,
+          excelPath: excelPath,
+          xmlDirPath: xmlFolderPath,
+        );
+      } else {
+        result = await lib.update(
+          cfgJson: _defaultCfg,
+          excelPath: excelPath,
+          xmlDirPath: xmlFolderPath,
+        );
+      }
       updateLog(result);
     } catch (e) {
       updateLog("转换失败: $e");
