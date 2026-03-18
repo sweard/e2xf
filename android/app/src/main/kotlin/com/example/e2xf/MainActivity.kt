@@ -1,4 +1,4 @@
-package com.example.e2xf
+package com.zole.e2xf
 
 import io.flutter.embedding.android.FlutterActivity
 
