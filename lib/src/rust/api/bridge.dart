@@ -6,8 +6,19 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `StreamLogger`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `enabled`, `flush`, `log`
+
 String greet({required String name}) =>
     RustLib.instance.api.crateApiBridgeGreet(name: name);
+
+/// 注册 Flutter 端的 log stream sink。每次调用会覆盖上次的 sink。
+Stream<String> createLogStream() =>
+    RustLib.instance.api.crateApiBridgeCreateLogStream();
+
+/// 切换日志级别:开 = Debug,关 = Info。
+void setLogDebug({required bool enable}) =>
+    RustLib.instance.api.crateApiBridgeSetLogDebug(enable: enable);
 
 String getDefaultCfg() => RustLib.instance.api.crateApiBridgeGetDefaultCfg();
 
