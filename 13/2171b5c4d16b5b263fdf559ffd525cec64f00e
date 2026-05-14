@@ -1,0 +1,19 @@
+docs/superpowers/plans/2026-05-14-rust-log-stream.md
+  s_75947bcd76b49a::t_1dd00092c773d4 1-695
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "132171b5c4d16b5b263fdf559ffd525cec64f00e",
+  "prompts": {},
+  "sessions": {
+    "s_75947bcd76b49a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8a5a2db-bf65-481f-ab96-d40213bbfb18",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
