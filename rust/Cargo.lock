@@ -726,6 +726,7 @@ version = "0.1.0"
 dependencies = [
  "excel_to_xml",
  "flutter_rust_bridge",
+ "log",
 ]
 
 [[package]]
