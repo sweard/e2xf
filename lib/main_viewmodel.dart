@@ -22,6 +22,9 @@ class MainViewModel {
   FileSystemEntity? _resolvedExcelFile;
   FileSystemEntity? _resolvedXmlFolder;
 
+  // Rust 日志流订阅
+  StreamSubscription<String>? _logSubscription;
+
   MainViewModel() {
     updateLog("Application initialized.");
   }
@@ -61,6 +64,9 @@ class MainViewModel {
   }
 
   void init() {
+    _logSubscription = lib.createLogStream().listen((message) {
+      updateLog(message);
+    });
     _loadPreferences();
   }
 
@@ -277,6 +283,11 @@ class MainViewModel {
     }
   }
 
+  /// 切换 Rust 端日志级别: true = Debug,false = Info(默认)。
+  void setLogDebug(bool enable) {
+    lib.setLogDebug(enable: enable);
+  }
+
   void updateLog(String message) {
     if (_log.value.isEmpty) {
       _log.value = message;
@@ -288,6 +299,7 @@ class MainViewModel {
 
   void dispose() async {
     _debounceTimer?.cancel(); // 清理防抖定时器
+    await _logSubscription?.cancel(); // 取消日志流订阅
 
     // 释放 macOS security-scoped 资源
     if (Platform.isMacOS) {
