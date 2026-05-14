@@ -299,6 +299,7 @@ name = "excel_to_xml"
 version = "0.1.8"
 dependencies = [
  "calamine",
+ "log",
  "quick-xml 0.37.5",
  "regex",
  "serde_json",
