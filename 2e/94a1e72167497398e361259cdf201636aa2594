@@ -1,0 +1,21 @@
+docs/superpowers/specs/2026-05-14-rust-log-stream-design.md
+  s_75947bcd76b49a::t_f95c4927116caf 1-201,203-207,209-211
+  s_75947bcd76b49a::t_7ae24a02e3799f 202,208
+  s_75947bcd76b49a::t_89cce4cab41a56 212-217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "2e94a1e72167497398e361259cdf201636aa2594",
+  "prompts": {},
+  "sessions": {
+    "s_75947bcd76b49a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8a5a2db-bf65-481f-ab96-d40213bbfb18",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
