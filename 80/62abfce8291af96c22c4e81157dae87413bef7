@@ -1,0 +1,24 @@
+rust/Cargo.lock
+  ai_agent 729
+rust/src/api/bridge.rs
+  s_75947bcd76b49a::t_2a152c492f3553 4
+  s_75947bcd76b49a::t_6a45f76beb42f7 3,5-37,47-66
+rust/Cargo.toml
+  s_75947bcd76b49a::t_666db4b0d66d9a 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "8062abfce8291af96c22c4e81157dae87413bef7",
+  "prompts": {},
+  "sessions": {
+    "s_75947bcd76b49a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8a5a2db-bf65-481f-ab96-d40213bbfb18",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
