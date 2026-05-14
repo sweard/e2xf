@@ -1,0 +1,22 @@
+lib/main_viewmodel.dart
+  s_75947bcd76b49a::t_e9fc47ce4df81c 286-290
+  s_75947bcd76b49a::t_af24bd91feb59e 67-69
+  s_75947bcd76b49a::t_a3c1438ae59d6c 25-27
+  s_75947bcd76b49a::t_a682c28e8f002a 302
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "5d4516b32531b7319be96722c5e78f1e709e4888",
+  "prompts": {},
+  "sessions": {
+    "s_75947bcd76b49a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8a5a2db-bf65-481f-ab96-d40213bbfb18",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
