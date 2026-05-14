@@ -1,0 +1,27 @@
+lib/src/rust/frb_generated.dart
+  s_75947bcd76b49a::t_4c33d005adfdeb 69,80-81,96-97,113-144,151,174,197,222,256,276-298,315,335-346,353-358,383-397,405-410,448-451,453-470,479-482
+lib/src/rust/frb_generated.io.dart
+  s_75947bcd76b49a::t_4c33d005adfdeb 22-26,30-32,45-52,56-58,75-84,89-90
+lib/src/rust/api/bridge.dart
+  s_75947bcd76b49a::t_4c33d005adfdeb 9-11,15-21
+lib/src/rust/frb_generated.web.dart
+  s_75947bcd76b49a::t_4c33d005adfdeb 24-28,32-34,47-54,58-60,77-86,91-92
+rust/src/frb_generated.rs
+  s_75947bcd76b49a::t_4c33d005adfdeb 40,48-85,249-280,323-338,347-353,406-409,422-425,432-445,453-459
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "d2fa84566fa31e07568221863176b95479114caa",
+  "prompts": {},
+  "sessions": {
+    "s_75947bcd76b49a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8a5a2db-bf65-481f-ab96-d40213bbfb18",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
