@@ -237,9 +237,9 @@ class _MainAppState extends State<MainApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ValueListenableBuilder(
-                valueListenable: widget.viewModel.cfgController,
-                builder: (context, value, child) {
+              ValueListenableBuilder<String>(
+                valueListenable: widget.viewModel.cfgErrTipEvent,
+                builder: (context, errTip, child) {
                   return _cfg();
                 },
               ),

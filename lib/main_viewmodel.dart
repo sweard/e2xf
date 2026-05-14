@@ -33,7 +33,7 @@ class MainViewModel {
   final Event<String> _selectedXmlFolderPath = Event("");
   String _defaultCfg = "";
   final Event<String> _log = Event("");
-  String _cfgErrTip = "";
+  final Event<String> _cfgErrTip = Event("");
   final Event<bool> _isLoading = Event(false);
   final Event<bool> _useQuickUpdate = Event(true);
 
@@ -47,7 +47,8 @@ class MainViewModel {
   Event<String> get selectedExcelPath => _selectedExcelPath;
   Event<String> get selectedXmlFolderPath => _selectedXmlFolderPath;
   Event<String> get log => _log;
-  String get cfgErrTip => _cfgErrTip;
+  String get cfgErrTip => _cfgErrTip.value;
+  Event<String> get cfgErrTipEvent => _cfgErrTip;
   Event<bool> get isLoading => _isLoading;
   Event<bool> get useQuickUpdate => _useQuickUpdate;
   late SharedPreferences prefs;
@@ -229,9 +230,9 @@ class MainViewModel {
         (element) => element == curSheetName.toString(),
       );
       if (isMatch) {
-        _cfgErrTip = "";
+        _cfgErrTip.value = "";
       } else {
-        _cfgErrTip = "Excel 中 没有对应的 Sheet Name";
+        _cfgErrTip.value = "Excel 中 没有对应的 Sheet Name";
       }
       _defaultCfg = JsonEncoder.withIndent('    ').convert(json);
       // 更新文本框内容
@@ -240,7 +241,7 @@ class MainViewModel {
       updateLog(
         "无法读取文件: $filePath\n错误: $e\n提示: macOS 沙盒限制，缓存的路径可能无法访问，请重新选择文件",
       );
-      _cfgErrTip = "文件访问失败，请重新选择";
+      _cfgErrTip.value = "文件访问失败，请重新选择";
     }
   }
 
