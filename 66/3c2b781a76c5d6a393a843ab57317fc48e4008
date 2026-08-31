@@ -1,0 +1,26 @@
+pubspec.yaml
+  s_275a20cee1ca24::t_9d7244ede5d8ba 22-23
+README.md
+  s_275a20cee1ca24::t_57d3a8d7cb1215 37
+  s_275a20cee1ca24::t_9d7244ede5d8ba 34
+.github/workflows/release.yml
+  s_275a20cee1ca24::t_9d7244ede5d8ba 24,68,116,157
+pubspec.lock
+  s_275a20cee1ca24::t_a95cac99e4fa8d 302,305,318,321,514,517,530,533,591-592
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "663c2b781a76c5d6a393a843ab57317fc48e4008",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
