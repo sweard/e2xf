@@ -262,21 +262,20 @@ class MainViewModel {
     try {
       _isLoading.value = true;
       updateLog("开始转换...");
-      var result = "";
       if (useQuickUpdate.value) {
-        result = await lib.quickUpdate(
+        await lib.quickUpdate(
           cfgJson: _defaultCfg,
           excelPath: excelPath,
           xmlDirPath: xmlFolderPath,
         );
       } else {
-        result = await lib.update(
+        await lib.update(
           cfgJson: _defaultCfg,
           excelPath: excelPath,
           xmlDirPath: xmlFolderPath,
         );
       }
-      updateLog(result);
+      updateLog("转换成功");
     } catch (e) {
       updateLog("转换失败: $e");
     } finally {

@@ -25,7 +25,7 @@ String getDefaultCfg() => RustLib.instance.api.crateApiBridgeGetDefaultCfg();
 List<String> getSheetNames({required String filePath}) =>
     RustLib.instance.api.crateApiBridgeGetSheetNames(filePath: filePath);
 
-Future<String> update({
+Future<void> update({
   required String cfgJson,
   required String excelPath,
   required String xmlDirPath,
@@ -35,7 +35,7 @@ Future<String> update({
   xmlDirPath: xmlDirPath,
 );
 
-Future<String> quickUpdate({
+Future<void> quickUpdate({
   required String cfgJson,
   required String excelPath,
   required String xmlDirPath,

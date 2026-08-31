@@ -135,9 +135,8 @@ fn wire__crate__api__bridge__get_sheet_names_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_file_path = <String>::sse_decode(&mut deserializer);
             deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let output_ok =
-                    Result::<_, ()>::Ok(crate::api::bridge::get_sheet_names(&api_file_path))?;
+            transform_result_sse::<_, String>((move || {
+                let output_ok = crate::api::bridge::get_sheet_names(&api_file_path)?;
                 Ok(output_ok)
             })())
         },
@@ -234,12 +233,12 @@ fn wire__crate__api__bridge__quick_update_impl(
             let api_xml_dir_path = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::bridge::quick_update(
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::api::bridge::quick_update(
                         &api_cfg_json,
                         &api_excel_path,
                         &api_xml_dir_path,
-                    ))?;
+                    )?;
                     Ok(output_ok)
                 })())
             }
@@ -305,12 +304,12 @@ fn wire__crate__api__bridge__update_impl(
             let api_xml_dir_path = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::bridge::update(
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::api::bridge::update(
                         &api_cfg_json,
                         &api_excel_path,
                         &api_xml_dir_path,
-                    ))?;
+                    )?;
                     Ok(output_ok)
                 })())
             }

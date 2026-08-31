@@ -87,7 +87,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiBridgeInitApp();
 
-  Future<String> crateApiBridgeQuickUpdate({
+  Future<void> crateApiBridgeQuickUpdate({
     required String cfgJson,
     required String excelPath,
     required String xmlDirPath,
@@ -95,7 +95,7 @@ abstract class RustLibApi extends BaseApi {
 
   void crateApiBridgeSetLogDebug({required bool enable});
 
-  Future<String> crateApiBridgeUpdate({
+  Future<void> crateApiBridgeUpdate({
     required String cfgJson,
     required String excelPath,
     required String xmlDirPath,
@@ -175,7 +175,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_String,
-          decodeErrorData: null,
+          decodeErrorData: sse_decode_String,
         ),
         constMeta: kCrateApiBridgeGetSheetNamesConstMeta,
         argValues: [filePath],
@@ -238,7 +238,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
   @override
-  Future<String> crateApiBridgeQuickUpdate({
+  Future<void> crateApiBridgeQuickUpdate({
     required String cfgJson,
     required String excelPath,
     required String xmlDirPath,
@@ -258,8 +258,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
         ),
         constMeta: kCrateApiBridgeQuickUpdateConstMeta,
         argValues: [cfgJson, excelPath, xmlDirPath],
@@ -297,7 +297,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "set_log_debug", argNames: ["enable"]);
 
   @override
-  Future<String> crateApiBridgeUpdate({
+  Future<void> crateApiBridgeUpdate({
     required String cfgJson,
     required String excelPath,
     required String xmlDirPath,
@@ -317,8 +317,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
         ),
         constMeta: kCrateApiBridgeUpdateConstMeta,
         argValues: [cfgJson, excelPath, xmlDirPath],
