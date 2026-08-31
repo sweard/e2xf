@@ -1,0 +1,20 @@
+macos/Podfile
+  h_74ac6e576b13a5 1
+macos/Podfile.lock
+  h_74ac6e576b13a5 22,26
+macos/Runner.xcodeproj/project.pbxproj
+  h_74ac6e576b13a5 32,92,108,170,238-240,266-268,570,652,702,809-820
+macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
+  h_74ac6e576b13a5 8-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "99193b6b8225d0706f5a0a00f0e2eebfb6b9d5ea",
+  "prompts": {},
+  "humans": {
+    "h_74ac6e576b13a5": {
+      "author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
