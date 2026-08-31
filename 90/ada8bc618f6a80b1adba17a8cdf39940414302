@@ -1,0 +1,35 @@
+pubspec.yaml
+  s_275a20cee1ca24::t_2850f3cf22c12e 40
+README.md
+  s_275a20cee1ca24::t_2850f3cf22c12e 36
+rust/Cargo.toml
+  s_275a20cee1ca24::t_2850f3cf22c12e 10
+lib/src/rust/api/bridge.dart
+  s_275a20cee1ca24::t_691373640a1244 2
+lib/src/rust/frb_generated.dart
+  s_275a20cee1ca24::t_9769a3488c6df4 2,66,76
+lib/src/rust/frb_generated.io.dart
+  s_275a20cee1ca24::t_82593d114e1d38 2
+lib/src/rust/frb_generated.web.dart
+  s_275a20cee1ca24::t_9be5f54d1759ee 2
+rust/src/frb_generated.rs
+  s_275a20cee1ca24::t_9ba7bc168abf5f 2,23-25,41,79,82,111-112,144,174-175,205,208,247,277,280,318,362,374,506,528
+pubspec.lock
+  s_275a20cee1ca24::t_4fb9c14a3eee47 202,205
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "90ada8bc618f6a80b1adba17a8cdf39940414302",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
