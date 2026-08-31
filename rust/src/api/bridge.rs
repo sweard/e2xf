@@ -73,7 +73,7 @@ pub fn get_default_cfg() -> String {
 
 #[flutter_rust_bridge::frb(sync)]
 pub fn get_sheet_names(file_path: &str) -> Result<Vec<String>, String> {
-    excel_to_xml::get_sheet_names(file_path)
+    excel_to_xml::get_sheet_names(file_path).map_err(|error| error.to_string())
 }
 
 pub fn update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Result<(), String> {
@@ -84,6 +84,7 @@ pub fn update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Result<()
         excel_to_xml::ConversionMode::LowMemory,
     )
     .map(|_| ())
+    .map_err(|error| error.to_string())
 }
 
 pub fn quick_update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Result<(), String> {
@@ -94,4 +95,5 @@ pub fn quick_update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Res
         excel_to_xml::ConversionMode::Fast,
     )
     .map(|_| ())
+    .map_err(|error| error.to_string())
 }
