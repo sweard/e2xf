@@ -1,0 +1,27 @@
+lib/main_viewmodel.dart
+  s_275a20cee1ca24::t_7a02280a6959d5 225,252,259-260
+pubspec.yaml
+  s_275a20cee1ca24::t_98d294ca7a8d54 34
+macos/Podfile.lock
+  s_275a20cee1ca24::t_801938ac0270d8 2-3,15,22-23,34,42
+macos/Flutter/GeneratedPluginRegistrant.swift
+  s_275a20cee1ca24::t_f5656b4233e125 8
+pubspec.lock
+  s_275a20cee1ca24::t_9e5479453d630d 4-11,72,75,88,91,120,123-131,144-160,163-179,562-570,573,592
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0cc47d04c7fd92e4ab1bda1551228eb1d3adef3a",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
