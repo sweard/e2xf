@@ -1,0 +1,27 @@
+rust/src/api/bridge.rs
+  s_275a20cee1ca24::t_b5ffe76328f563 75,79,83
+lib/main_viewmodel.dart
+  s_275a20cee1ca24::t_a5ef57ccd05510 266,272,278
+lib/src/rust/api/bridge.dart
+  s_275a20cee1ca24::t_d0c3d6d85d4b9c 28,38
+lib/src/rust/frb_generated.dart
+  s_275a20cee1ca24::t_a246092d3a9204 90,98,178,241,261-262,300,320-321
+rust/src/frb_generated.rs
+  s_275a20cee1ca24::t_e4f8e6e97baf18 138-139,236-237,241,307-308,312
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fab0cd109eff2790b4da09b0c8c3920a092fcc35",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
