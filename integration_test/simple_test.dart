@@ -12,7 +12,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('选择Excel文件'), findsOneWidget);
-    expect(find.text('选择模块文件'), findsOneWidget);
+    expect(find.text('选择模块文件夹'), findsOneWidget);
     expect(find.text('开始转换'), findsOneWidget);
   });
 }
