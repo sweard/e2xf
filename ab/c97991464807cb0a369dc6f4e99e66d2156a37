@@ -1,0 +1,14 @@
+rust/src/excel_to_xml
+  h_74ac6e576b13a5 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "abc97991464807cb0a369dc6f4e99e66d2156a37",
+  "prompts": {},
+  "humans": {
+    "h_74ac6e576b13a5": {
+      "author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
