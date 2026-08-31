@@ -222,7 +222,7 @@ class MainViewModel {
 
   // 选择文件夹的方法
   Future<void> selectFolder() async {
-    String? folderPath = await FilePicker.platform.getDirectoryPath();
+    final folderPath = await FilePicker.getDirectoryPath();
     if (_disposed) {
       return;
     }
@@ -249,16 +249,15 @@ class MainViewModel {
 
   // 选择Excel文件的方法
   Future<void> selectExcelFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    final file = await FilePicker.pickFile(
       type: FileType.custom,
       allowedExtensions: ['xlsx', 'xls'],
     );
     if (_disposed) {
       return;
     }
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      String? filePath = file.path;
+    if (file != null) {
+      final filePath = file.path;
       if (filePath == null) {
         updateLog("Selected file path is null.");
         return;
