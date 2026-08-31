@@ -1,0 +1,21 @@
+pubspec.yaml
+  s_275a20cee1ca24::t_f31957817a9eb9 19
+rust/Cargo.lock
+  s_275a20cee1ca24::t_bf8b6a847712b7 280
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a5a2b2058a59f05331992a42812cddd80ae694f8",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
