@@ -1,0 +1,30 @@
+test/main_viewmodel_test.dart
+  s_275a20cee1ca24::t_68d71325a0e00a 1-19
+lib/main.dart
+  s_275a20cee1ca24::t_2470b0e01f13e1 1-2,34,236-285,287-289
+lib/main_viewmodel.dart
+  s_275a20cee1ca24::t_4dbd2f4be10aad 369-374,376,379-383,385-398
+  s_275a20cee1ca24::t_94da634f4a5f86 282-284,325-327,357-359
+  s_275a20cee1ca24::t_5bab96a4fc7a40 130,132-133,135,163,173,175-176,178,206,214-220,231,239,267,273
+  s_275a20cee1ca24::t_b9de4b7637844b 13,28-31,43,59,69,73-77,81-83,87-96,101,105-106
+  s_275a20cee1ca24::t_c680a5d20da7dc 84-86
+  s_275a20cee1ca24::t_b3c112867de6cc 116-118,131,174
+  s_275a20cee1ca24::t_55fdc643dd894d 399-403,408-414,417-423
+  s_275a20cee1ca24::t_9ca5c0bde27a2f 102-104,141-143,148-153,185-187,192-197,226-228,256-258
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "1649415fb3cc61bc7a1e1504113c98c9cee96e8c",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
