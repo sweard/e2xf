@@ -7,8 +7,12 @@ import 'package:e2xf/main_viewmodel.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
-  testWidgets('Can call rust function', (WidgetTester tester) async {
+  testWidgets('Shows the conversion form', (WidgetTester tester) async {
     await tester.pumpWidget(MainApp(viewModel: MainViewModel()));
-    expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.text('选择Excel文件'), findsOneWidget);
+    expect(find.text('选择模块文件'), findsOneWidget);
+    expect(find.text('开始转换'), findsOneWidget);
   });
 }
