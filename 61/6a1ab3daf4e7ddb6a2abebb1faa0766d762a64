@@ -1,0 +1,21 @@
+rust/src/api/bridge.rs
+  s_275a20cee1ca24::t_70cd57ccf90a4b 4-5
+.github/workflows/release.yml
+  s_275a20cee1ca24::t_dbc91fe5976704 9-51,53,63,68,70,101,111,116,118,137,147,157,159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "616a1ab3daf4e7ddb6a2abebb1faa0766d762a64",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
