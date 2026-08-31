@@ -33,7 +33,7 @@ CI 当前固定使用：
 
 - Flutter 3.41.4（Dart 3.11.1）
 - Rust 1.98.0
-- flutter_rust_bridge / codegen 2.11.1
+- flutter_rust_bridge / codegen 2.13.0
 
 还需要目标桌面平台对应的 Flutter 原生构建工具链。
 

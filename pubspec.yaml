@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.9
   rust_lib_e2xf:
     path: rust_builder
-  flutter_rust_bridge: 2.11.1
+  flutter_rust_bridge: 2.13.0
   shared_preferences: ^2.5.5
   macos_secure_bookmarks: ^0.2.1
 
