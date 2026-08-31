@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:e2xf/src/rust/frb_generated.dart';
@@ -28,8 +30,8 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
-    widget.viewModel.init();
     super.initState();
+    unawaited(widget.viewModel.init());
   }
 
   @override
@@ -231,51 +233,60 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ValueListenableBuilder<String>(
-                valueListenable: widget.viewModel.cfgErrTipEvent,
-                builder: (context, errTip, child) {
-                  return _cfg();
-                },
+      home: ValueListenableBuilder<bool>(
+        valueListenable: widget.viewModel.isReady,
+        builder: (context, isReady, child) {
+          if (!isReady) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ValueListenableBuilder<String>(
+                    valueListenable: widget.viewModel.cfgErrTipEvent,
+                    builder: (context, errTip, child) {
+                      return _cfg();
+                    },
+                  ),
+                  _marginTop(_marginValue),
+                  ValueListenableBuilder(
+                    valueListenable: widget.viewModel.selectedExcelPath,
+                    builder: (context, value, child) {
+                      return _item(
+                        value,
+                        'Excel文件未选择',
+                        '选择Excel文件',
+                        () => widget.viewModel.selectExcelFile(),
+                      );
+                    },
+                  ),
+                  _marginTop(_marginValue),
+                  ValueListenableBuilder(
+                    valueListenable: widget.viewModel.selectedXmlFolderPath,
+                    builder: (context, value, child) {
+                      return _item(
+                        value,
+                        '模块文件夹未选择',
+                        '选择模块文件夹',
+                        () => widget.viewModel.selectFolder(),
+                      );
+                    },
+                  ),
+                  _marginTop(_marginValue),
+                  _update(),
+                  _marginTop(40),
+                  // 日志输出
+                  _logText(),
+                ],
               ),
-              _marginTop(_marginValue),
-              ValueListenableBuilder(
-                valueListenable: widget.viewModel.selectedExcelPath,
-                builder: (context, value, child) {
-                  return _item(
-                    value,
-                    'Excel文件未选择',
-                    '选择Excel文件',
-                    () => widget.viewModel.selectExcelFile(),
-                  );
-                },
-              ),
-              _marginTop(_marginValue),
-              ValueListenableBuilder(
-                valueListenable: widget.viewModel.selectedXmlFolderPath,
-                builder: (context, value, child) {
-                  return _item(
-                    value,
-                    '模块文件夹未选择',
-                    '选择模块文件夹',
-                    () => widget.viewModel.selectFolder(),
-                  );
-                },
-              ),
-
-              _marginTop(_marginValue),
-              _update(),
-              _marginTop(40),
-              // 日志输出
-              _logText(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
