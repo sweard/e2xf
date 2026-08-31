@@ -1,0 +1,19 @@
+rust/Cargo.lock
+  s_275a20cee1ca24::t_bb6f44bd84f506 65,67,70,135,137,145,284,643-651,826-831,927,929,935
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "1ae5dc1795a908aa71c7742d73e80ca00df24f25",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
