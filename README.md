@@ -31,9 +31,10 @@ Flutter UI → MainViewModel → flutter_rust_bridge → Rust bridge → excel_t
 
 CI 当前固定使用：
 
-- Flutter 3.41.4（Dart 3.11.1）
+- Flutter 3.47.2（Dart 3.13.2）
 - Rust 1.98.0
 - flutter_rust_bridge / codegen 2.13.0
+- macOS 12.0 或更高版本（macOS 构建）
 
 还需要目标桌面平台对应的 Flutter 原生构建工具链。
 
