@@ -1,0 +1,21 @@
+pubspec.yaml
+  s_275a20cee1ca24::t_01c0036b5462c5 34,37,41
+pubspec.lock
+  s_275a20cee1ca24::t_6740c6ffecd2c5 72,75,128,131,365,368
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "cdb5fda24b373cd9ae71d1148b316fc919c68f45",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
