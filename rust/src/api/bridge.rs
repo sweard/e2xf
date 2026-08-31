@@ -77,9 +77,21 @@ pub fn get_sheet_names(file_path: &str) -> Result<Vec<String>, String> {
 }
 
 pub fn update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Result<(), String> {
-    excel_to_xml::update(cfg_json, excel_path, xml_dir_path)
+    excel_to_xml::convert(
+        cfg_json,
+        excel_path,
+        xml_dir_path,
+        excel_to_xml::ConversionMode::LowMemory,
+    )
+    .map(|_| ())
 }
 
 pub fn quick_update(cfg_json: &str, excel_path: &str, xml_dir_path: &str) -> Result<(), String> {
-    excel_to_xml::quick_update(cfg_json, excel_path, xml_dir_path)
+    excel_to_xml::convert(
+        cfg_json,
+        excel_path,
+        xml_dir_path,
+        excel_to_xml::ConversionMode::Fast,
+    )
+    .map(|_| ())
 }
