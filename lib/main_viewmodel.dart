@@ -152,7 +152,7 @@ class MainViewModel {
             return;
           }
           _resolvedExcelFile = resolvedFile; // 保存已解析的文件
-          _updateCfgWithExcel(resolvedFile.path);
+          await _updateCfgWithExcel(resolvedFile.path);
           updateLog("已恢复 Excel 文件访问权限: ${resolvedFile.path}");
           return;
         } catch (e) {
@@ -163,7 +163,7 @@ class MainViewModel {
       final excelPathCache = preferences.getString(excelPathKey);
       if (excelPathCache != null && excelPathCache.isNotEmpty) {
         _selectedExcelPath.value = excelPathCache;
-        _updateCfgWithExcel(excelPathCache);
+        await _updateCfgWithExcel(excelPathCache);
       }
     }
   }
@@ -282,13 +282,16 @@ class MainViewModel {
       if (_disposed) {
         return;
       }
-      _updateCfgWithExcel(filePath);
+      await _updateCfgWithExcel(filePath);
     }
   }
 
-  void _updateCfgWithExcel(String filePath) {
+  Future<void> _updateCfgWithExcel(String filePath) async {
     try {
-      final sheetNames = lib.getSheetNames(filePath: filePath);
+      final sheetNames = await lib.getSheetNames(filePath: filePath);
+      if (_disposed) {
+        return;
+      }
       final json = jsonDecode(_defaultCfg);
       final sheetName = json['sheetName'];
       updateLog(sheetNames.toString());
@@ -310,6 +313,9 @@ class MainViewModel {
       // 更新文本框内容
       cfgController.text = _defaultCfg;
     } catch (e) {
+      if (_disposed) {
+        return;
+      }
       updateLog(
         "无法读取文件: $filePath\n错误: $e\n提示: macOS 沙盒限制，缓存的路径可能无法访问，请重新选择文件",
       );

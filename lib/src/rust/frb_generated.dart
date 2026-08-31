@@ -81,7 +81,7 @@ abstract class RustLibApi extends BaseApi {
 
   String crateApiBridgeGetDefaultCfg();
 
-  List<String> crateApiBridgeGetSheetNames({required String filePath});
+  Future<List<String>> crateApiBridgeGetSheetNames({required String filePath});
 
   String crateApiBridgeGreet({required String name});
 
@@ -165,13 +165,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "get_default_cfg", argNames: []);
 
   @override
-  List<String> crateApiBridgeGetSheetNames({required String filePath}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
+  Future<List<String>> crateApiBridgeGetSheetNames({required String filePath}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(filePath, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 3,
+            port: port_,
+          );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_String,

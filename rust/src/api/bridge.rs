@@ -71,7 +71,6 @@ pub fn get_default_cfg() -> String {
     excel_to_xml::get_default_cfg_json()
 }
 
-#[flutter_rust_bridge::frb(sync)]
 pub fn get_sheet_names(file_path: &str) -> Result<Vec<String>, String> {
     excel_to_xml::get_sheet_names(file_path).map_err(|error| error.to_string())
 }

@@ -22,7 +22,7 @@ void setLogDebug({required bool enable}) =>
 
 String getDefaultCfg() => RustLib.instance.api.crateApiBridgeGetDefaultCfg();
 
-List<String> getSheetNames({required String filePath}) =>
+Future<List<String>> getSheetNames({required String filePath}) =>
     RustLib.instance.api.crateApiBridgeGetSheetNames(filePath: filePath);
 
 Future<void> update({
