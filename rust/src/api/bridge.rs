@@ -1,8 +1,8 @@
 extern crate excel_to_xml;
 
-use std::sync::{OnceLock, RwLock};
 use crate::frb_generated::StreamSink;
-use log::{Log, Metadata, Record, LevelFilter};
+use log::{LevelFilter, Log, Metadata, Record};
+use std::sync::{OnceLock, RwLock};
 
 static SINK: OnceLock<RwLock<Option<StreamSink<String>>>> = OnceLock::new();
 

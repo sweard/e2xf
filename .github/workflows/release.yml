@@ -6,7 +6,51 @@ on:
       - 'v*'
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@1.98.0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze Flutter
+        run: flutter analyze
+
+      - name: Test Flutter
+        run: flutter test test
+
+      - name: Check Rust formatting
+        run: |
+          cargo fmt --manifest-path rust/Cargo.toml -- --check
+          cargo fmt --manifest-path rust/src/excel_to_xml/Cargo.toml -- --check
+
+      - name: Lint Rust
+        run: |
+          cargo clippy --locked --manifest-path rust/Cargo.toml --all-targets -- -D warnings
+          cargo clippy --locked --manifest-path rust/src/excel_to_xml/Cargo.toml --all-targets -- -D warnings
+
+      - name: Test Rust
+        run: |
+          cargo test --locked --manifest-path rust/Cargo.toml
+          cargo test --locked --manifest-path rust/src/excel_to_xml/Cargo.toml
+
   build-macos:
+    needs: validate
     runs-on: macos-latest
     
     steps:
@@ -16,12 +60,14 @@ jobs:
           submodules: recursive
       
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.98.0
       
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.41.4'
           channel: 'stable'
+          cache: true
       
       - name: Install dependencies
         run: flutter pub get
@@ -52,6 +98,7 @@ jobs:
           path: e2xf-macos.dmg
 
   build-windows:
+    needs: validate
     runs-on: windows-latest
     
     steps:
@@ -61,12 +108,14 @@ jobs:
           submodules: recursive
       
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.98.0
       
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.41.4'
           channel: 'stable'
+          cache: true
       
       - name: Install dependencies
         run: flutter pub get
@@ -85,6 +134,7 @@ jobs:
           path: e2xf-windows.zip
 
   build-linux:
+    needs: validate
     runs-on: ubuntu-latest
     
     steps:
@@ -94,7 +144,7 @@ jobs:
           submodules: recursive
       
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.98.0
       
       - name: Install Linux dependencies
         run: |
@@ -104,7 +154,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.41.4'
           channel: 'stable'
+          cache: true
       
       - name: Install dependencies
         run: flutter pub get
