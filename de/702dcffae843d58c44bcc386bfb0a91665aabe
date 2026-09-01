@@ -1,0 +1,24 @@
+rust_builder/macos/rust_lib_e2xf.podspec
+  s_275a20cee1ca24::t_478c86892c8b3e 43-45
+  s_275a20cee1ca24::t_642b7d65f7388c 47
+rust/Cargo.toml
+  s_275a20cee1ca24::t_a5a6f7e9abea7b 16-18
+macos/Podfile.lock
+  s_275a20cee1ca24::t_722bbc97087349 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "de702dcffae843d58c44bcc386bfb0a91665aabe",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
