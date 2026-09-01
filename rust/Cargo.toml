@@ -13,3 +13,6 @@ log = "0.4.34"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
+[profile.release]
+strip = "symbols"
