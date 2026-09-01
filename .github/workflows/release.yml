@@ -83,7 +83,7 @@ jobs:
       - name: Build macOS app (${{ matrix.architecture }})
         env:
           FLUTTER_XCODE_ARCHS: ${{ matrix.architecture }}
-        run: flutter build macos --release
+        run: flutter build macos --release --split-debug-info=build/symbols/macos-${{ matrix.architecture }}
 
       - name: Verify macOS architecture
         run: |
@@ -115,6 +115,13 @@ jobs:
           name: macos-app-${{ matrix.architecture }}
           path: e2xf-macos-${{ matrix.architecture }}.dmg
 
+      - name: Upload macOS symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-symbols-${{ matrix.architecture }}
+          path: build/symbols/macos-${{ matrix.architecture }}/
+          if-no-files-found: error
+
   build-windows:
     needs: validate
     runs-on: windows-latest
@@ -139,7 +146,7 @@ jobs:
         run: flutter pub get
       
       - name: Build Windows app
-        run: flutter build windows --release
+        run: flutter build windows --release --split-debug-info=build/symbols/windows
       
       - name: Create ZIP archive
         run: |
@@ -150,6 +157,13 @@ jobs:
         with:
           name: windows-app
           path: e2xf-windows.zip
+
+      - name: Upload Windows symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-symbols
+          path: build/symbols/windows/
+          if-no-files-found: error
 
   build-linux:
     needs: validate
@@ -180,7 +194,7 @@ jobs:
         run: flutter pub get
       
       - name: Build Linux app
-        run: flutter build linux --release
+        run: flutter build linux --release --split-debug-info=build/symbols/linux
       
       - name: Create tarball
         run: |
@@ -192,6 +206,13 @@ jobs:
         with:
           name: linux-app
           path: e2xf-linux.tar.gz
+
+      - name: Upload Linux symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-symbols
+          path: build/symbols/linux/
+          if-no-files-found: error
 
   create-release:
     needs: [build-macos, build-windows, build-linux]
