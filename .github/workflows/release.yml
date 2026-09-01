@@ -53,6 +53,12 @@ jobs:
 
   build-macos:
     needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - arm64
+          - x86_64
     runs-on: macos-latest
     
     steps:
@@ -74,8 +80,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Build macOS app
+      - name: Build macOS app (${{ matrix.architecture }})
+        env:
+          FLUTTER_XCODE_ARCHS: ${{ matrix.architecture }}
         run: flutter build macos --release
+
+      - name: Verify macOS architecture
+        run: |
+          actual_architecture="$(lipo -archs build/macos/Build/Products/Release/e2xf.app/Contents/MacOS/e2xf)"
+          if [ "$actual_architecture" != "${{ matrix.architecture }}" ]; then
+            echo "Expected ${{ matrix.architecture }}, got $actual_architecture"
+            exit 1
+          fi
       
       - name: Create DMG
         run: |
@@ -86,18 +102,18 @@ jobs:
             --window-size 800 400 \
             --icon-size 100 \
             --app-drop-link 600 185 \
-            "e2xf-macos.dmg" \
+            "e2xf-macos-${{ matrix.architecture }}.dmg" \
             "build/macos/Build/Products/Release/e2xf.app" || true
           # Fallback if create-dmg fails
-          if [ ! -f "e2xf-macos.dmg" ]; then
-            hdiutil create -volname "e2xf" -srcfolder "build/macos/Build/Products/Release/e2xf.app" -ov -format UDZO "e2xf-macos.dmg"
+          if [ ! -f "e2xf-macos-${{ matrix.architecture }}.dmg" ]; then
+            hdiutil create -volname "e2xf" -srcfolder "build/macos/Build/Products/Release/e2xf.app" -ov -format UDZO "e2xf-macos-${{ matrix.architecture }}.dmg"
           fi
       
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos-app
-          path: e2xf-macos.dmg
+          name: macos-app-${{ matrix.architecture }}
+          path: e2xf-macos-${{ matrix.architecture }}.dmg
 
   build-windows:
     needs: validate
@@ -183,10 +199,15 @@ jobs:
     permissions:
         contents: write
     steps:
-      - name: Download macOS artifact
+      - name: Download macOS arm64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: macos-app
+          name: macos-app-arm64
+
+      - name: Download macOS x86_64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-app-x86_64
       
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
@@ -202,7 +223,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            e2xf-macos.dmg
+            e2xf-macos-arm64.dmg
+            e2xf-macos-x86_64.dmg
             e2xf-windows.zip
             e2xf-linux.tar.gz
           draft: false
