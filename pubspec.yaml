@@ -10,7 +10,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Desktop application semantic version and build number.
-version: 1.1.0+1
+version: 1.1.1+1
 
 environment:
   sdk: ^3.13.0
