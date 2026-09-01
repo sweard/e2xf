@@ -1,0 +1,29 @@
+flutter_rust_bridge.yaml
+  s_275a20cee1ca24::t_5f31ef76d9bb28 3-4
+pubspec.yaml
+  s_275a20cee1ca24::t_5b08079fa33edb 12
+lib/src/rust/api/bridge.dart
+  s_275a20cee1ca24::t_0fee9734aa5699 7
+lib/src/rust/frb_generated.dart
+  s_275a20cee1ca24::t_b2a75630372583 7,10,14
+lib/src/rust/frb_generated.io.dart
+  s_275a20cee1ca24::t_aefdf2129c97dd 7,11,13
+lib/src/rust/frb_generated.web.dart
+  s_275a20cee1ca24::t_82d6b2c9c5e074 10,13,15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "2edcb4843394fee0f0f0442d99f7a2be86022690",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
