@@ -33,6 +33,10 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Rust / Slint desktop application
+/target/
+/dist/
+
 # Symbolication related
 app.*.symbols
 
