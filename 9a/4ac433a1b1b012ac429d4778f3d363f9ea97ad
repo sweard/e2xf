@@ -1,0 +1,43 @@
+.github/workflows/release.yml
+  s_275a20cee1ca24::t_de86c0641f80ee 1,5-15,21,24,27,29-33,35,37,39,41,43-53,57,61-67,69,72,74-77,79-84,92-93,95,98-102,104-108,117,120,124-126,129-133,139,143,145,147-149
+Cargo.lock
+  s_275a20cee1ca24::t_a1ca07c5d15da6 1-5947
+src/bin/preview.rs
+  s_275a20cee1ca24::t_40693f662c49d0 1-80
+src/main.rs
+  s_275a20cee1ca24::t_1f4f11fa3d535f 1-460
+src/settings.rs
+  s_275a20cee1ca24::t_ef4300e29fa032 1-177
+src/state.rs
+  s_275a20cee1ca24::t_5f56ef94bfe75b 1-150
+tests/desktop_conversion.rs
+  s_275a20cee1ca24::t_b7ce3d4f0821be 1-58
+tests/support/mod.rs
+  s_47257f93fe147f::t_fed0df37785422 1-56
+ui/main.slint
+  s_275a20cee1ca24::t_4a6fbef62dd6b8 1-143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a4ac433a1b1b012ac429d4778f3d363f9ea97ad",
+  "prompts": {},
+  "sessions": {
+    "s_275a20cee1ca24": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    },
+    "s_47257f93fe147f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01a04616-af3e-7cb2-9801-f8a8aedb6292",
+        "model": "unknown"
+      },
+      "human_author": "fangjian <fangjian@wondertechlabs.com>"
+    }
+  }
+}
