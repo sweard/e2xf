@@ -20,6 +20,11 @@ export component MainWindow inherits Window {
     in-out property <bool> quick-mode: true;
     private property <bool> compact: false;
     changed height => { root.compact = root.height < 760px; }
+    changed log-text => { root.scroll-logs-to-bottom(); }
+
+    function scroll-logs-to-bottom() {
+        logs.content-y = min(0px, logs.visible-height - logs.content-height);
+    }
 
     callback config-edited(string);
     callback select-excel();
@@ -107,8 +112,12 @@ export component MainWindow inherits Window {
                 y: 8px;
                 width: parent.width - 16px;
                 height: parent.height - 16px;
-                content-y: min(0px, self.visible-height - self.content-height);
-                Text {
+                content-width: self.visible-width;
+                content-height: max(self.visible-height, log-lines.preferred-height);
+                // Follow new content/layout changes without locking out manual scrolling.
+                changed content-height => { root.scroll-logs-to-bottom(); }
+                changed visible-height => { root.scroll-logs-to-bottom(); }
+                log-lines := Text {
                     x: 0;
                     y: 0;
                     text: root.log-text;
