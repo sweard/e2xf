@@ -1,0 +1,49 @@
+[package]
+name = "e2xf"
+version = "1.1.1"
+edition = "2021"
+default-run = "e2xf"
+description = "Excel to Android strings.xml desktop converter"
+build = "build.rs"
+
+[workspace]
+members = ["."]
+exclude = ["rust", "rust/src/excel_to_xml"]
+resolver = "2"
+
+[dependencies]
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-18", "backend-winit", "renderer-software", "accessibility", "raw-window-handle-06"] }
+excel_to_xml = { path = "rust/src/excel_to_xml" }
+rfd = "0.17.2"
+dirs = "6"
+log = "0.4.34"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.151"
+tempfile = "3"
+png = { version = "0.18", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+plist = "1"
+
+[build-dependencies]
+slint-build = "=1.18.1"
+
+[target.'cfg(target_os = "windows")'.build-dependencies]
+winresource = "0.1"
+
+[dev-dependencies]
+zip = { version = "8.6.0", default-features = false }
+
+[features]
+preview = ["dep:png"]
+
+[[bin]]
+name = "e2xf-preview"
+path = "src/bin/preview.rs"
+required-features = ["preview"]
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+debug = 1

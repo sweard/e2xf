@@ -1,0 +1,143 @@
+import { AboutSlint, Button, CheckBox, LineEdit, Palette, ProgressIndicator, ScrollView, TextEdit } from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    title: "e2xf";
+    preferred-width: 920px;
+    preferred-height: 840px;
+    min-width: 660px;
+    min-height: 660px;
+    background: Palette.background;
+    default-font-size: 14px;
+
+    in-out property <string> config-text;
+    in property <string> config-error;
+    in property <string> excel-path;
+    in property <string> folder-path;
+    in property <string> log-text;
+    in property <string> status-text: "请选择 Excel 文件和模块文件夹";
+    in property <bool> busy: false;
+    in property <bool> status-error: false;
+    in-out property <bool> quick-mode: true;
+    private property <bool> compact: false;
+    changed height => { root.compact = root.height < 760px; }
+
+    callback config-edited(string);
+    callback select-excel();
+    callback select-folder();
+    callback convert();
+    callback quick-mode-changed(bool);
+    callback clear-log();
+
+    VerticalLayout {
+        padding: 16px;
+        spacing: root.compact ? 8px : 16px;
+        HorizontalLayout {
+            spacing: 12px;
+            Text { text: "e2xf"; font-size: 24px; font-weight: 700; color: Palette.foreground; }
+            Text { text: "Excel → Android strings.xml"; color: Palette.foreground.transparentize(0.35); }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "关于"; clicked => { about.show(); } }
+        }
+
+        Text { text: "转换配置（JSON）"; font-weight: 600; color: Palette.foreground; }
+        config-editor := TextEdit {
+            preferred-height: root.compact ? 160px : 220px;
+            min-height: root.compact ? 140px : 180px;
+            max-height: root.compact ? 160px : 220px;
+            vertical-stretch: 0;
+            text <=> root.config-text;
+            enabled: !root.busy;
+            font-size: 14px;
+            wrap: no-wrap;
+            edited(value) => { root.config-edited(value); }
+        }
+        if root.config-error != "": Text {
+            text: root.config-error;
+            color: #ba1a1a;
+            wrap: word-wrap;
+        }
+
+        HorizontalLayout {
+            spacing: 20px;
+            LineEdit { text: root.excel-path; placeholder-text: "Excel 文件未选择"; read-only: true; horizontal-stretch: 1; height: 50px; }
+            Button { text: "选择 Excel 文件"; width: 180px; height: 50px; enabled: !root.busy; clicked => { root.select-excel(); } }
+        }
+        HorizontalLayout {
+            spacing: 20px;
+            LineEdit { text: root.folder-path; placeholder-text: "模块文件夹未选择"; read-only: true; horizontal-stretch: 1; height: 50px; }
+            Button { text: "选择模块文件夹"; width: 180px; height: 50px; enabled: !root.busy; clicked => { root.select-folder(); } }
+        }
+        HorizontalLayout {
+            spacing: 16px;
+            Button {
+                text: root.busy ? "处理中…" : "开始转换";
+                height: 50px;
+                horizontal-stretch: 1;
+                primary: true;
+                enabled: !root.busy;
+                clicked => { root.convert(); }
+            }
+            CheckBox {
+                text: "快速转换";
+                checked <=> root.quick-mode;
+                enabled: !root.busy;
+                toggled => { root.quick-mode-changed(self.checked); }
+            }
+        }
+        if root.busy: ProgressIndicator { indeterminate: true; }
+        Text {
+            text: root.status-text;
+            color: root.status-error ? #ba1a1a : Palette.foreground.transparentize(0.3);
+            wrap: word-wrap;
+        }
+        HorizontalLayout {
+            Text { text: "运行日志"; font-weight: 600; color: Palette.foreground; }
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "清空日志"; clicked => { root.clear-log(); } }
+        }
+        Rectangle {
+            vertical-stretch: 1;
+            min-height: 60px;
+            background: Palette.control-background;
+            border-width: 1px;
+            border-color: Palette.border;
+            border-radius: 8px;
+            logs := ScrollView {
+                x: 8px;
+                y: 8px;
+                width: parent.width - 16px;
+                height: parent.height - 16px;
+                content-y: min(0px, self.visible-height - self.content-height);
+                Text {
+                    x: 0;
+                    y: 0;
+                    text: root.log-text;
+                    width: logs.visible-width;
+                    wrap: word-wrap;
+                    font-size: 14px;
+                    color: Palette.foreground;
+                }
+            }
+        }
+    }
+    about := PopupWindow {
+        x: (root.width - self.width) / 2;
+        y: (root.height - self.height) / 2;
+        width: 420px;
+        height: 280px;
+        Rectangle {
+            background: Palette.background;
+            border-width: 1px;
+            border-color: Palette.border;
+            border-radius: 8px;
+            VerticalLayout {
+                padding: 24px;
+                spacing: 16px;
+                Text { text: "e2xf 1.1.1"; font-size: 20px; font-weight: 700; color: Palette.foreground; }
+                Text { text: "Excel → Android strings.xml"; color: Palette.foreground; }
+                AboutSlint { }
+                Button { text: "关闭"; clicked => { about.close(); } }
+            }
+        }
+    }
+}

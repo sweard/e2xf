@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=e2xf
+Comment=Excel to Android strings.xml converter
+Exec=e2xf
+Icon=e2xf
+Terminal=false
+Categories=Development;Utility;

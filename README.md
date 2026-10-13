@@ -1,162 +1,104 @@
 # e2xf
 
-e2xf 是一个桌面端 Excel → Android `strings.xml` 转换工具。Flutter 负责配置、文件选择和日志界面，Rust 负责读取 Excel、匹配 Android 语言资源目录并安全更新 XML 文件。
+Excel → Android `strings.xml` 桌面转换工具，支持 macOS、Windows 和 Linux。
 
-当前发布平台为 macOS、Windows 和 Linux。
+`slint` 分支将界面迁移为 **Slint 1.18.1 + Rust**。Slint 编译为原生界面，通过 Rust 直接调用 `excel_to_xml` 核心，不需要 Flutter 引擎、Flutter Rust Bridge、Dart codegen 或 Cargokit。
 
-## 仓库结构
-
-项目由一个主仓库和一个 Git 子模块组成：
-
-```text
-e2xf/
-├── lib/                         Flutter 界面与状态管理
-├── rust/                        Flutter Rust Bridge 适配层（属于主仓库）
-│   └── src/excel_to_xml/        Rust 转换核心（独立 Git 子模块）
-├── rust_builder/                Cargokit 原生构建插件
-├── integration_test/            Flutter 集成测试
-├── test/                        Flutter 单元测试
-└── .github/workflows/           构建、验证与发布流程
-```
-
-调用链：
-
-```text
-Flutter UI → MainViewModel → flutter_rust_bridge → Rust bridge → excel_to_xml → strings.xml
-```
-
-`rust/` 整体不是第二个仓库，真正的子模块路径是 `rust/src/excel_to_xml`。
-
-## 环境要求
-
-CI 当前固定使用：
-
-- Flutter 3.47.2（Dart 3.13.2）
-- Rust 1.98.0
-- flutter_rust_bridge / codegen 2.13.0
-- macOS 12.0 或更高版本（macOS 构建）
-
-还需要目标桌面平台对应的 Flutter 原生构建工具链。
-
-## 获取项目
-
-首次克隆时同时初始化 Rust 子模块：
+## 运行与构建
 
 ```bash
 git clone --recurse-submodules https://github.com/sweard/e2xf.git
 cd e2xf
+git switch slint
+cargo run --locked
 ```
 
-已有工作区可执行：
+需要 Rust 1.98.0。Linux 需要 X11 或 Wayland、Fontconfig、libxkbcommon，文件选择需要 GTK/GNOME/KDE 的 XDG Desktop Portal 或 Zenity。Ubuntu 开发依赖：
 
 ```bash
-git submodule update --init --recursive
+sudo apt install pkg-config libfontconfig1-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev libx11-xcb-dev libxcursor-dev libxi-dev libdbus-1-dev
 ```
 
-## 运行
+构建发布二进制：
 
 ```bash
-flutter pub get
-flutter run -d macos
+cargo build --locked --release --bin e2xf
 ```
 
-将 `macos` 替换为 `windows` 或 `linux` 即可运行相应桌面版本。
+macOS App 打包示例：
 
-基本使用流程：
+```bash
+MACOSX_DEPLOYMENT_TARGET=12.0 cargo build --locked --release --bin e2xf --target aarch64-apple-darwin
+bash scripts/package-macos.sh aarch64-apple-darwin
+```
 
-1. 选择包含翻译内容的 `.xlsx` 文件。
-2. 选择包含 Android `res` 目录的模块文件夹。
-3. 检查或修改 JSON 配置。
-4. 选择普通转换或快速转换。
-5. 点击“开始转换”，在界面下方查看 Rust 和 Flutter 日志。
+输出为 `dist/macos/arm64/e2xf.app`；Intel 使用 `x86_64-apple-darwin`。发布工作流生成两个 DMG，以及 Windows ZIP 和 Linux tar.gz。
 
-普通转换按语言读取 Excel，内存占用较低；快速转换一次读取所有语言，速度更快但占用更多内存。两种模式应产生相同结果。
+## 使用
 
-## 配置说明
+1. 选择 `.xlsx` 文件；当前转换核心不支持旧版 `.xls` 格式。
+2. 选择 Android 主资源目录（例如模块的 `src/main/res`），或只包含一个目标 `res` 的上层目录。多 source set 模块应直接选择 `src/main/res`，避免误选其他资源目录。
+3. 编辑 JSON 配置；空 `sheetName` 自动使用第一个工作表。
+4. 选择普通转换或快速转换，点击“开始转换”。
 
-默认配置由 Rust 核心提供，主要字段如下：
+普通转换逐语言读取，快速转换一次读取全部语言。转换在后台线程执行，日志保留最新 1000 行，成功后显示更新的 XML 文件数。错误以 Rust 返回值为准。转换过程中禁止修改输入和关闭窗口，避免中断文件替换。
+
+配置编辑后延迟 500 毫秒保存，退出前再次保存。配置文件位于系统用户配置目录下的 `e2xf/settings.json`，通过同目录临时文件替换。首次启动尝试读取旧 Flutter SharedPreferences（包括 macOS 原应用容器）；保存的配置和路径会迁移，旧数据保留。无法访问缓存路径时重新选择文件即可。可通过 `e2xf --settings PATH` 使用独立配置文件。
+
+macOS 新应用作为普通桌面程序发布，不启用 App Sandbox，文件访问不再依赖 Flutter 的 security-scoped bookmark。当前发布包使用 ad-hoc 签名，未配置 Developer ID 签名和公证，不能直接用于 Mac App Store。
+
+## 架构
+
+```text
+Slint UI → Rust controller → excel_to_xml → strings.xml
+
+ui/main.slint                声明式界面
+src/main.rs                  文件选择、后台线程、日志与 UI 回调
+src/settings.rs              原子配置保存与旧偏好导入
+src/state.rs                 配置校验、工作表选择、转换输入快照
+rust/src/excel_to_xml/       独立 Git 子模块，包含 XML 实体文本重复修复
+packaging/ + scripts/        桌面发行包
+.github/workflows/          Rust 检查、界面截图、三平台构建与发布
+```
+
+旧 Flutter 代码（`lib/`、`rust/` 下的 FRB 适配层、`rust_builder/` 和平台 runner）暂留用于比较。它们不参与新的 Cargo 构建或发行包。
+
+## 配置
+
+默认 JSON 由 Rust 核心提供：
 
 | 字段 | 作用 |
 | --- | --- |
-| `sheetName` | Excel 工作表名称；为空时使用第一个工作表 |
+| `sheetName` | 工作表；为空时选第一个 |
 | `tagName` | Android string key 所在列的表头 |
-| `defaultLang` | 默认语言，用于其他语言空白内容回退 |
-| `langMap` | Android 语言目录后缀与 Excel 表头的映射 |
-| `disableEscape` | 是否禁用 XML 转义 |
-| `escapeOnly` | 指定需要执行的字符替换规则 |
-| `reset` | 是否完全重写目标 XML，而不是保留未出现在 Excel 中的标签 |
-| `replaceBlankWithDefault` | 翻译为空时是否使用默认语言内容 |
-| `regex` | 写入前用于清理文本的正则表达式 |
-| `ignoreFolder` | 搜索 `res` 目录时需要忽略的路径片段 |
+| `defaultLang` | 默认语言和空翻译回退语言 |
+| `langMap` | Android 语言目录后缀与 Excel 表头映射 |
+| `disableEscape` / `escapeOnly` | XML 字符转义规则 |
+| `reset` | 是否完全重写目标 XML |
+| `replaceBlankWithDefault` | 空翻译是否回退默认语言 |
+| `regex` | 写入前清理文本的正则 |
+| `ignoreFolder` | 搜索 `res` 时忽略的路径片段 |
 
-默认语言对应 `res/values/strings.xml`，其他语言对应 `res/values-<lang>/strings.xml`。Excel 中存在语言列但目标 XML 缺失时，转换会明确失败，不会静默跳过。
+文件更新继续使用原核心的临时文件、备份、原子替换与失败回滚机制。
 
-## 文件安全
-
-转换不会边读取边覆盖原文件：
-
-1. 先为所有语言生成同目录临时文件。
-2. 所有临时文件成功后，为原文件建立备份。
-3. Unix 平台使用同目录原子重命名替换；Windows 在删除目标前已完成备份。
-4. 任一文件替换失败时，已更新的文件会从备份回滚。
-5. 回滚不完整时保留备份，并通过错误信息给出失败文件。
-
-因此调用方应以 Rust 返回的 `Result` 为最终状态，不要仅根据日志文本判断成功。
-
-## 开发与验证
-
-Flutter：
+## 验证
 
 ```bash
-flutter analyze
-flutter test test
-```
-
-Rust bridge 与核心：
-
-```bash
-cargo fmt --manifest-path rust/Cargo.toml -- --check
-cargo fmt --manifest-path rust/src/excel_to_xml/Cargo.toml -- --check
-
-cargo clippy --locked --manifest-path rust/Cargo.toml --all-targets -- -D warnings
-cargo clippy --locked --manifest-path rust/src/excel_to_xml/Cargo.toml --all-targets -- -D warnings
-
-cargo test --locked --manifest-path rust/Cargo.toml
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets --features preview -- -D warnings
+cargo test --locked --features preview
 cargo test --locked --manifest-path rust/src/excel_to_xml/Cargo.toml
 ```
 
-Rust 核心测试会动态生成最小 XLSX，覆盖普通/快速模式一致性、缺少语言文件、XML 损坏、错误传播和替换失败回滚。
-
-## 更新 Flutter Rust Bridge
-
-修改 `rust/src/api/bridge.rs` 的公开函数后，重新生成 Rust/Dart 绑定：
+无需显示器的 UI 预览：
 
 ```bash
-flutter_rust_bridge_codegen generate
+cargo run --locked --features preview --bin e2xf-preview -- /tmp/e2xf.png idle
+# 状态：idle / busy / error / success / about；末尾可指定 660x660 等尺寸
 ```
 
-codegen 版本必须与 `pubspec.yaml` 中的 `flutter_rust_bridge` 版本保持一致。生成后同时提交 `rust/src/frb_generated.rs` 和 `lib/src/rust/` 下的变化。
+实际 UI 回调另有无显示器集成测试，覆盖工作表读取、两种转换模式、转换失败后的状态恢复、配置错误及日志清空。Slint 可选 MCP 调试模式暂未启用：本机 Cargo 索引缓存尚未提供其所需的 `pbjson` / `pbjson-build` 0.9 和 `prost` / `prost-build` / `prost-types` 0.14；这些版本已在 crates.io 发布，需要刷新本机索引后再验证，不影响默认应用构建或运行。
 
-## 子模块开发
+## Slint
 
-核心逻辑修改应先在 `rust/src/excel_to_xml` 仓库中提交，再回到主仓库提交新的子模块指针：
-
-```bash
-cd rust/src/excel_to_xml
-git status
-
-cd ../../..
-git status
-```
-
-克隆、CI 和发布环境都必须使用递归子模块检出，否则 Rust bridge 无法找到 `excel_to_xml`。
-
-## 发布
-
-推送 `v*` 标签会触发 GitHub Actions：
-
-1. 先运行 Flutter analyze/test 和 Rust fmt/clippy/test。
-2. 验证通过后并行构建 macOS、Windows、Linux。
-3. 生成 DMG、ZIP、tar.gz 并创建 GitHub Release。
-
-发布流程定义在 `.github/workflows/release.yml`。
+界面的“关于”入口包含 `AboutSlint` 控件，提供 Slint attribution。Slint 可按 [Royalty-free Desktop, Mobile, and Web Applications License 2.0](https://github.com/slint-ui/slint/blob/v1.18.1/LICENSES/LicenseRef-Slint-Royalty-free-2.0.md) 用于本桌面应用；本次迁移不更改项目自身许可证。
